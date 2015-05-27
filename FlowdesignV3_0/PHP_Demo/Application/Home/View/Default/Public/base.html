@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+    <block name="title">
+        <title> Flowdesign.leipi.org</title>
+  <meta name="keyword" content="流程设计器,Web Flowdesign,Flowdesigner,专业流程设计器,WEB流程设计器">
+  <meta name="description" content="国内最容易使用和开发的流程设计器，你可以在此基础上任意修改使功能无限强大！">
+    </block>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="author" content="leipi.org">
+    <link href="__PUBLIC__/css/bootstrap/css/bootstrap.css?{$_cjv}" rel="stylesheet" type="text/css" />
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap/css/bootstrap-ie6.css?{$_cjv}">
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap/css/ie.css?{$_cjv}">
+    <![endif]-->
+    <link href="__PUBLIC__/css/site.css?{$_cjv}" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        var _root='{$_site_url}{:U('/')}',_controller = '{$_controller}';
+    </script>
+    <block name="head"><!--head  style or js --></block>
+ </head>
+<body>
+
+<!-- fixed navbar -->
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="brand" href="http://www.leipi.org" target="_blank">雷劈网</a>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+            <li><a  href="http://flowdesign.leipi.org/">流程设计器</a></li>
+            <li><a href="http://formdesign.leipi.org">表单设计器</a></li>
+            <li><a href="http://qrcode.leipi.org">自动生成二维码</a></li>
+            <li><a href="http://flowdesign.leipi.org/index.php?s=/doc.html">文档</a></li>
+			<li class="active"><a href="{:U('/demo')}">实例</a></li>
+            <li><a href="http://flowdesign.leipi.org/index.php?s=/downloads.html">下载</a></li>
+            <li><a href="http://flowdesign.leipi.org/index.php?s=/feedback.html">公开讨论</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+	<block name="body"><!--主体内容--></block>
+    
+    
+ <div class="bs-footer" role="contentinfo" id="bs-footer">
+      <div class="container">
+          <p><span class="glyphicon glyphicon-list-alt"></span> 免责声明：本站仅分享开发思路和示例代码并且乐于交流和促进网络良性发展，是非商业工具，如有疑问请加群或邮件告知，积极配合调整。</p>
+          <p><span class="glyphicon glyphicon-list-alt"></span> 反馈：payonesmile@qq.com、<a target="_blank" style="color:#f30" href="http://www.leipi.org/commit-code/"><i class="icon-leaf"></i>我要贡献示例</a></p>
+
+          <p><img src="http://formdesign.leipi.org/Public/images/alipay.png" width="100" alt="支付宝扫一扫"  title="有你们的支持，我们将做的更好"/>
+            支持：支付宝扫一扫，<a href="http://formdesign.leipi.org/support.html"  title="有你们的支持，我们将做的更好">查看记录</a></p>
+
+          <p><span class="glyphicon glyphicon-bookmark"></span> 鸣谢：<a href="http://ueditor.baidu.com" target="_balnk">UEditor</a>、<a href="http://www.bootcss.com" target="_balnk">Bootstrap中文网</a>、<a href="http://www.leipi.org" target="_balnk">雷劈网</a>、
+            <a href="http://git.leipi.org" target="_balnk">GitHub</a>、
+            <a href="http://www.wwei.cn/" target="_balnk" title="二维码生成器">二维码生成器</a>
+
+          </p>
+          <p><a href="http://www.leipi.org" title="雷劈网"><img src="http://www.leipi.org/wp-content/themes/leipi/images/leipi.png" alt="雷劈认证 icon" style="height:30px"></a> &copy;2014 Ueditor Formdesign Plugins v4 leipi.org <a href="http://www.miitbeian.gov.cn/" target="_blank">粤ICP备13051130号</a></p>
+      </div>
+</div>
+    <block name="footer_js"><!--footer js --></block>
+<include file="Public:team"/>
+
+<div style="display:none">
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F1e6fd3a46a5046661159c6bf55aad1cf' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</div>
+
+</body>
+</html>
