@@ -383,8 +383,8 @@ Q 群：143263697
             hoverPaintStyle: this.connectorHoverStyle,
             beforeDrop: function(params) {
               var j = 0;
+              var str = $('#' + params.sourceId).attr('process_id') + ',' + $('#' + params.targetId).attr('process_id');
               $('#flow_process_info').find('input').each(function(i) {
-                var str = $('#' + params.sourceId).attr('process_id') + ',' + $('#' + params.targetId).attr('process_id');
                 if (str == $(this).val()) {
                   j++;
                   return;
