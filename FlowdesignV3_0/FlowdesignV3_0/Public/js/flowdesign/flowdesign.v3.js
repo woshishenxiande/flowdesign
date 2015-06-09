@@ -184,7 +184,7 @@ Q 群：143263697
       if (processData.list) {
         $.each(processData.list, function(i, row) {
           var nodeDiv = document.createElement('div');
-          var nodeId = "window" + row.id,
+          var nodeId = "step" + row.id,
             badge = 'badge-inverse',
             icon = 'icon-star';
           if (lastProcessId == 0) //第一步
@@ -201,6 +201,7 @@ Q 群：143263697
             .attr("process_id", row.id)
             .addClass("process-step btn btn-small")
             .html('<span class="process-flag badge ' + badge + '"><i class="' + icon + ' icon-white"></i></span>&nbsp;' + row.process_name)
+            //.append('<div>something</div>')
             .mousedown(function(e) {
               if (e.which == 3) { //右键绑定
                 _canvas.find('#flow_active_id').val(row.id);
@@ -233,7 +234,7 @@ Q 群：143263697
 
       //绑定添加连接操作。画线-input text值  拒绝重复连接
       jsPlumb.bind("jsPlumbConnection", function(info) {
-        setConnections(info.connection)
+        setConnections(info.connection);
       });
       //绑定删除connection事件
       jsPlumb.bind("jsPlumbConnectionDetached", function(info) {
@@ -290,14 +291,8 @@ Q 群：143263697
         }
       });
       //reset  start
-      var _canvas_design = function() {
-
-          //连接关联的步骤
-          $('.process-step').each(function(i) {
-            var sourceId = $(this).attr('process_id');
-            //var nodeId = "window"+id;
-            var prcsto = $(this).attr('process_to');
-            var toArr = prcsto.split(",");
+      var _fnMakeConnection=function(sSourceId,sProcess_To){
+            var toArr = (sProcess_To||'').split(",");
             var processData = defaults.processData;
             $.each(toArr, function(j, targetId) {
 
@@ -306,7 +301,7 @@ Q 群：143263697
                 var is_source = false,
                   is_target = false;
                 $.each(processData.list, function(i, row) {
-                  if (row.id == sourceId) {
+                  if (row.id == sSourceId) {
                     is_source = true;
                   } else if (row.id == targetId) {
                     is_target = true;
@@ -317,30 +312,40 @@ Q 群：143263697
 
                 if (is_source && is_target) {
                   jsPlumb.connect({
-                    source: "window" + sourceId,
-                    target: "window" + targetId
+                    source: "step" + sSourceId,
+                    target: "step" + targetId
                       /* ,labelStyle : { cssClass:"component label" }
                        ,label : id +" - "+ n*/
                   });
                   return;
                 }
               }
-            })
+            });
+      };
+      var _fnMakeAllConnection = function() {
+
+          //连接关联的步骤
+          $('.process-step').each(function(i) {
+            var sourceId = $(this).attr('process_id');
+            //var nodeId = "step"+id;
+            var prcsto = $(this).attr('process_to');
+            _fnMakeConnection(sourceId,prcsto);
           });
-        } //_canvas_design end reset 
-      _canvas_design();
+        } //_fnMakeAllConnection end reset 
+      _fnMakeAllConnection();
 
       //-----外部调用----------------------
 
       var Flowdesign = {
-
+        fnMakeAllConnection:_fnMakeAllConnection,
+        fnMakeConnection:_fnMakeConnection,
         addProcess: function(row) {
 
           if (row.id <= 0) {
             return false;
           }
           var nodeDiv = document.createElement('div');
-          var nodeId = "window" + row.id,
+          var nodeId = "step" + row.id,
             badge = 'badge-inverse',
             icon = 'icon-star';
 
@@ -381,7 +386,7 @@ Q 群：143263697
               radius: 1
             },
             hoverPaintStyle: this.connectorHoverStyle,
-            beforeDrop: function(params) {
+            beforeDrop: function(params) {//debugger;
               var j = 0;
               var str = $('#' + params.sourceId).attr('process_id') + ',' + $('#' + params.targetId).attr('process_id');
               $('#flow_process_info').find('input').each(function(i) {
@@ -394,17 +399,28 @@ Q 群：143263697
                 defaults.fnRepeat();
                 return false;
               } else {
+                mtAfterDrop(params);
                 return true;
               }
             }
           });
           return true;
-
+        },
+        addProcessXConnector:function(row){
+          this.addProcess(row);
+          var sInput= "<input type='hidden' value=\"" + row.id + "," + row.process_to + "\">";      
+          $('#flow_process_info').append(sInput);
+          //debugger;
+          //setConnections([{sourceId:row.id,targetId:row.process_to}]);
+          var processData=defaults.processData;
+          processData.list=processData.list||[];
+          processData.list.push(row);
+          this.fnMakeConnection(row.id,row.process_to);
         },
         delProcess: function(activeId) {
           if (activeId <= 0) return false;
 
-          $("#window" + activeId).remove();
+          $("#step" + activeId).remove();
           return true;
         },
         getActiveId: function() {
@@ -460,7 +476,7 @@ Q 群：143263697
             return '';
           }
 
-        },
+        },        
         clear: function() {
           try {
 
@@ -477,7 +493,7 @@ Q 群：143263697
           try {
             //jsPlumb.reset();
             this.clear();
-            _canvas_design();
+            this.fnMakeAllConnection();
             return true;
           } catch (e) {
             return false;
