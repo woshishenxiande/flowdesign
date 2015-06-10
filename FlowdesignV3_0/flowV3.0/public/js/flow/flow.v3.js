@@ -1,5 +1,5 @@
 /*
-flowdesign write by zolad
+flow write by zolad
 @2015-6-10 
 */
 (function($) {
@@ -90,8 +90,8 @@ flowdesign write by zolad
     jsPlumb.repaintEverything(); //重画
   };
 
-  /*Flowdesign 命名纯粹为了美观，而不是 formDesign */
-  $.fn.Flowdesign = function(options) {
+  /*Flow 命名纯粹为了美观，而不是 formDesign */
+  $.fn.Flow = function(options) {
       var _canvas = $(this);
       //右键步骤的步骤号
       _canvas.append('<input type="hidden" id="flow_active_id" value="0"/><input type="hidden" id="flow_copy_id" value="0"/>');
@@ -163,7 +163,7 @@ flowdesign write by zolad
           .attr("process_id", row.id)
           .addClass("process-step btn btn-small")
           .html('<span class="process-flag badge ' + badge + '"><i class="' + icon + ' icon-white"></i></span>&nbsp;' + row.process_name)
-          // .append('<div><img src="Public/images/flowdesign.png" alt="" /></div>')
+          // .append('<div><img src="public/images/flow.png" alt="" /></div>')
           // .append('<div>detail</div>')
           .mousedown(function(e) {
             if (e.which == 3) { //右键绑定
@@ -325,7 +325,7 @@ flowdesign write by zolad
 
       //-----外部调用----------------------
 
-      var Flowdesign = {
+      var Flow = {
         fnMakeAllConnection: _fnMakeAllConnection,
         fnMakeConnection: _fnMakeConnection,
         fnMakeStep: _fnMakeStep,
@@ -413,7 +413,6 @@ flowdesign write by zolad
         },
         clear: function() {
           try {
-
             jsPlumb.detachEveryConnection();
             jsPlumb.deleteEveryEndpoint();
             $('#flow_process_info').html('');
@@ -434,8 +433,6 @@ flowdesign write by zolad
           }
         }
       };
-      return Flowdesign;
-
-
-    } //endof $.fn.Flowdesign
+      return Flow;
+    } //endof $.fn.Flow
 })(jQuery);
