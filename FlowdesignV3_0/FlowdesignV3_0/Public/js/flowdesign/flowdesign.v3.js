@@ -1,19 +1,6 @@
 /*
-项目：雷劈网流程设计器
-官网：http://flowdesign.leipi.org
-Q 群：143263697
-基本协议：apache2.0
-
-88888888888  88                             ad88  88                ad88888ba   8888888888   
-88           ""                            d8"    88               d8"     "88  88           
-88                                         88     88               8P       88  88  ____     
-88aaaaa      88  8b,dPPYba,   ,adPPYba,  MM88MMM  88  8b       d8  Y8,    ,d88  88a8PPPP8b,  
-88"""""      88  88P'   "Y8  a8P_____88    88     88  `8b     d8'   "PPPPPP"88  PP"     `8b  
-88           88  88          8PP"""""""    88     88   `8b   d8'            8P           d8  
-88           88  88          "8b,   ,aa    88     88    `8b,d8'    8b,    a8P   Y8a     a8P  
-88           88  88           `"Ybbd8"'    88     88      Y88'     `"Y8888P'     "Y88888P"   
-                                                          d8'                                
-2014-3-15 Firefly95、xinG  
+flowdesign write by zolad
+@2015-6-10 
 */
 (function($) {
   var defaults = {
@@ -57,7 +44,7 @@ Q 群：143263697
       color: '#fff',
       backgroundColor: '#5a6377'
     },
-    mtAfterDrop: function(params) {
+    fnAfterDrop: function(params) {
       //alert('连接成功后调用');
       //alert("连接："+params.sourceId +" -> "+ params.targetId);
     },
@@ -75,28 +62,8 @@ Q 群：143263697
 
   }; /*defaults end*/
 
-  var initEndPoints = function() {
-    $(".process-flag").each(function(i, e) {
-      var p = $(e).parent();
-      jsPlumb.makeSource($(e), {
-        parent: p,
-        anchor: "Continuous",
-        endpoint: ["Dot", {
-          radius: 1
-        }],
-        connector: ["Flowchart", {
-          stub: [5, 5]
-        }],
-        connectorStyle: defaults.connectorPaintStyle,
-        hoverPaintStyle: defaults.connectorHoverStyle,
-        dragOptions: {},
-        maxConnections: -1
-      });
-    });
-  }
-
   /*设置隐藏域保存关系信息*/
-  var aConnections = [];//[{sourceId:xx,targetId:xx}]
+  var aConnections = []; //[{sourceId:xx,targetId:xx}]
   var setConnections = function(conn, remove) {
     if (!remove) aConnections.push(conn);
     else {
@@ -177,41 +144,42 @@ Q 群：143263697
         jsPlumb.setRenderMode(jsPlumb.SVG);
       }
 
+      var _fnMakeStep = function(row) {
+        var nodeDiv = document.createElement('div');
+        var nodeId = "step" + row.id,
+          badge = 'badge-inverse',
+          icon = 'icon-star';
+        if (row.id == defaults.firstStepId) //第一步
+        {
+          badge = 'badge-info';
+          icon = 'icon-play';
+        }
+        if (row.icon) {
+          icon = row.icon;
+        }
+        $(nodeDiv).attr("id", nodeId)
+          .attr("style", row.style)
+          .attr("process_to", row.process_to)
+          .attr("process_id", row.id)
+          .addClass("process-step btn btn-small")
+          .html('<span class="process-flag badge ' + badge + '"><i class="' + icon + ' icon-white"></i></span>&nbsp;' + row.process_name)
+          // .append('<div><img src="Public/images/flowdesign.png" alt="" /></div>')
+          // .append('<div>detail</div>')
+          .mousedown(function(e) {
+            if (e.which == 3) { //右键绑定
+              _canvas.find('#flow_active_id').val(row.id);
+              contextmenu.bindings = defaults.processMenus
+              $(this).contextMenu('processMenu', contextmenu);
+            }
+          });
+        _canvas.append(nodeDiv);
+      };
 
-      //初始化原步骤
-      var lastProcessId = 0;
+      //初始化原步骤      
       var processData = defaults.processData;
       if (processData.list) {
         $.each(processData.list, function(i, row) {
-          var nodeDiv = document.createElement('div');
-          var nodeId = "step" + row.id,
-            badge = 'badge-inverse',
-            icon = 'icon-star';
-          if (lastProcessId == 0) //第一步
-          {
-            badge = 'badge-info';
-            icon = 'icon-play';
-          }
-          if (row.icon) {
-            icon = row.icon;
-          }
-          $(nodeDiv).attr("id", nodeId)
-            .attr("style", row.style)
-            .attr("process_to", row.process_to)
-            .attr("process_id", row.id)
-            .addClass("process-step btn btn-small")
-            .html('<span class="process-flag badge ' + badge + '"><i class="' + icon + ' icon-white"></i></span>&nbsp;' + row.process_name)
-            //.append('<div>something</div>')
-            .mousedown(function(e) {
-              if (e.which == 3) { //右键绑定
-                _canvas.find('#flow_active_id').val(row.id);
-                contextmenu.bindings = defaults.processMenus
-                $(this).contextMenu('processMenu', contextmenu);
-              }
-            });
-          _canvas.append(nodeDiv);
-          //索引变量
-          lastProcessId = row.id;
+          _fnMakeStep(row);
         }); //each
       }
 
@@ -230,7 +198,26 @@ Q 群：143263697
 
       //使之可拖动
       jsPlumb.draggable(jsPlumb.getSelector(".process-step"));
-      initEndPoints();
+      var _fnMakeSource = function() {
+        $(".process-flag").each(function(i, e) {
+          var p = $(e).parent();
+          jsPlumb.makeSource($(e), {
+            parent: p,
+            anchor: "Continuous",
+            endpoint: ["Dot", {
+              radius: 1
+            }],
+            connector: ["Flowchart", {
+              stub: [5, 5]
+            }],
+            connectorStyle: defaults.connectorPaintStyle,
+            hoverPaintStyle: defaults.connectorHoverStyle,
+            dragOptions: {},
+            maxConnections: -1
+          });
+        });
+      };
+      _fnMakeSource();
 
       //绑定添加连接操作。画线-input text值  拒绝重复连接
       jsPlumb.bind("jsPlumbConnection", function(info) {
@@ -247,80 +234,82 @@ Q 群：143263697
       });
 
       //连接成功回调函数
-      function mtAfterDrop(params) {
+      function fnAfterDrop(params) {
         //console.log(params)
-        defaults.mtAfterDrop&&defaults.mtAfterDrop({
+        defaults.fnAfterDrop && defaults.fnAfterDrop({
           sourceId: $("#" + params.sourceId).attr('process_id'),
           targetId: $("#" + params.targetId).attr('process_id')
         });
 
       }
+      var _fnMakeTarget = function() {
+        jsPlumb.makeTarget(jsPlumb.getSelector(".process-step"), {
+          dropOptions: {
+            hoverClass: "hover",
+            activeClass: "active"
+          },
+          anchor: "Continuous",
+          maxConnections: -1,
+          endpoint: ["Dot", {
+            radius: 1
+          }],
+          paintStyle: {
+            fillStyle: "#ec912a",
+            radius: 1
+          },
+          hoverPaintStyle: this.connectorHoverStyle,
+          beforeDrop: function(params) {
+            if (params.sourceId == params.targetId) return false; /*不能链接自己*/
+            var j = 0;
+            var str = $('#' + params.sourceId).attr('process_id') + ',' + $('#' + params.targetId).attr('process_id');
+            $('#flow_process_info').find('input').each(function(i) {
+              if (str == $(this).val()) {
+                j++;
+                return;
+              }
+            })
+            if (j > 0) {
+              defaults.fnRepeat();
+              return false;
+            } else {
+              fnAfterDrop(params);
+              return true;
+            }
+          }
+        });
+      };
+      _fnMakeTarget();
+      //reset  start
+      var _fnMakeConnection = function(sSourceId, sProcess_To) {
+        var toArr = (sProcess_To || '').split(",");
+        var processData = defaults.processData;
+        $.each(toArr, function(j, targetId) {
 
-      jsPlumb.makeTarget(jsPlumb.getSelector(".process-step"), {
-        dropOptions: {
-          hoverClass: "hover",
-          activeClass: "active"
-        },
-        anchor: "Continuous",
-        maxConnections: -1,
-        endpoint: ["Dot", {
-          radius: 1
-        }],
-        paintStyle: {
-          fillStyle: "#ec912a",
-          radius: 1
-        },
-        hoverPaintStyle: this.connectorHoverStyle,
-        beforeDrop: function(params) {
-          if (params.sourceId == params.targetId) return false; /*不能链接自己*/
-          var j = 0;
-          var str = $('#' + params.sourceId).attr('process_id') + ',' + $('#' + params.targetId).attr('process_id');
-          $('#flow_process_info').find('input').each(function(i) {
-            if (str == $(this).val()) {
-              j++;
+          if (targetId != '' && targetId != 0) {
+            //检查 source 和 target是否存在
+            var is_source = false,
+              is_target = false;
+            $.each(processData.list, function(i, row) {
+              if (row.id == sSourceId) {
+                is_source = true;
+              } else if (row.id == targetId) {
+                is_target = true;
+              }
+              if (is_source && is_target)
+                return true;
+            });
+
+            if (is_source && is_target) {
+              jsPlumb.connect({
+                source: "step" + sSourceId,
+                target: "step" + targetId
+                  /* ,labelStyle : { cssClass:"component label" }
+                   ,label : id +" - "+ n*/
+              });
               return;
             }
-          })
-          if (j > 0) {
-            defaults.fnRepeat();
-            return false;
-          } else {
-            mtAfterDrop(params);
-            return true;
           }
-        }
-      });
-      //reset  start
-      var _fnMakeConnection=function(sSourceId,sProcess_To){
-            var toArr = (sProcess_To||'').split(",");
-            var processData = defaults.processData;
-            $.each(toArr, function(j, targetId) {
-
-              if (targetId != '' && targetId != 0) {
-                //检查 source 和 target是否存在
-                var is_source = false,
-                  is_target = false;
-                $.each(processData.list, function(i, row) {
-                  if (row.id == sSourceId) {
-                    is_source = true;
-                  } else if (row.id == targetId) {
-                    is_target = true;
-                  }
-                  if (is_source && is_target)
-                    return true;
-                });
-
-                if (is_source && is_target) {
-                  jsPlumb.connect({
-                    source: "step" + sSourceId,
-                    target: "step" + targetId
-                      /* ,labelStyle : { cssClass:"component label" }
-                       ,label : id +" - "+ n*/
-                  });
-                  return;
-                }
-              }
-            });
+        });
       };
       var _fnMakeAllConnection = function() {
 
@@ -329,7 +318,7 @@ Q 群：143263697
             var sourceId = $(this).attr('process_id');
             //var nodeId = "step"+id;
             var prcsto = $(this).attr('process_to');
-            _fnMakeConnection(sourceId,prcsto);
+            _fnMakeConnection(sourceId, prcsto);
           });
         } //_fnMakeAllConnection end reset 
       _fnMakeAllConnection();
@@ -337,85 +326,30 @@ Q 群：143263697
       //-----外部调用----------------------
 
       var Flowdesign = {
-        fnMakeAllConnection:_fnMakeAllConnection,
-        fnMakeConnection:_fnMakeConnection,
+        fnMakeAllConnection: _fnMakeAllConnection,
+        fnMakeConnection: _fnMakeConnection,
+        fnMakeStep: _fnMakeStep,
+        fnMakeSource: _fnMakeSource,
+        fnMakeTarget: _fnMakeTarget,
         addProcess: function(row) {
-
-          if (row.id <= 0) {
-            return false;
-          }
-          var nodeDiv = document.createElement('div');
-          var nodeId = "step" + row.id,
-            badge = 'badge-inverse',
-            icon = 'icon-star';
-
-          if (row.icon) {
-            icon = row.icon;
-          }
-          $(nodeDiv).attr("id", nodeId)
-            .attr("style", row.style)
-            .attr("process_to", row.process_to)
-            .attr("process_id", row.id)
-            .addClass("process-step btn btn-small")
-            .html('<span class="process-flag badge ' + badge + '"><i class="' + icon + ' icon-white"></i></span>&nbsp;' + row.process_name)
-            .mousedown(function(e) {
-              if (e.which == 3) { //右键绑定
-                _canvas.find('#flow_active_id').val(row.id);
-                contextmenu.bindings = defaults.processMenus
-                $(this).contextMenu('processMenu', contextmenu);
-              }
-            });
-
-          _canvas.append(nodeDiv);
+          _fnMakeStep(row);
           //使之可拖动 和 连线
           jsPlumb.draggable(jsPlumb.getSelector(".process-step"));
-          initEndPoints();
+          _fnMakeSource();
           //使可以连接线
-          jsPlumb.makeTarget(jsPlumb.getSelector(".process-step"), {
-            dropOptions: {
-              hoverClass: "hover",
-              activeClass: "active"
-            },
-            anchor: "Continuous",
-            maxConnections: -1,
-            endpoint: ["Dot", {
-              radius: 1
-            }],
-            paintStyle: {
-              fillStyle: "#ec912a",
-              radius: 1
-            },
-            hoverPaintStyle: this.connectorHoverStyle,
-            beforeDrop: function(params) {//debugger;
-              var j = 0;
-              var str = $('#' + params.sourceId).attr('process_id') + ',' + $('#' + params.targetId).attr('process_id');
-              $('#flow_process_info').find('input').each(function(i) {
-                if (str == $(this).val()) {
-                  j++;
-                  return;
-                }
-              })
-              if (j > 0) {
-                defaults.fnRepeat();
-                return false;
-              } else {
-                mtAfterDrop(params);
-                return true;
-              }
-            }
-          });
+          _fnMakeTarget();
           return true;
         },
-        addProcessXConnector:function(row){
+        addProcessXConnector: function(row) {
           this.addProcess(row);
-          var sInput= "<input type='hidden' value=\"" + row.id + "," + row.process_to + "\">";      
+          var sInput = "<input type='hidden' value=\"" + row.id + "," + row.process_to + "\">";
           $('#flow_process_info').append(sInput);
           //debugger;
           //setConnections([{sourceId:row.id,targetId:row.process_to}]);
-          var processData=defaults.processData;
-          processData.list=processData.list||[];
+          var processData = defaults.processData;
+          processData.list = processData.list || [];
           processData.list.push(row);
-          this.fnMakeConnection(row.id,row.process_to);
+          _fnMakeConnection(row.id, row.process_to);
         },
         delProcess: function(activeId) {
           if (activeId <= 0) return false;
@@ -476,7 +410,7 @@ Q 群：143263697
             return '';
           }
 
-        },        
+        },
         clear: function() {
           try {
 
@@ -493,7 +427,7 @@ Q 群：143263697
           try {
             //jsPlumb.reset();
             this.clear();
-            this.fnMakeAllConnection();
+            _fnMakeAllConnection();
             return true;
           } catch (e) {
             return false;

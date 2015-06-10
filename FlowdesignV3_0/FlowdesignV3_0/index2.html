@@ -208,12 +208,12 @@ $(function(){
     js 命名习惯：首字母小写 + 其它首字线大写
     */
     /*步骤数据*/
-    var processData = {"total":5,"list":[{"id":"61","flow_id":"4","process_name":"\u53d1\u8d77\u7533\u8bf7","process_to":"63,64","icon":"icon-ok","style":"width:121px;height:41px;line-height:41px;color:#0e76a8;left:193px;top:132px;"},{"id":"62","flow_id":"4","process_name":"\u5ba1\u62792","process_to":"65","icon":"icon-star","style":"width:120px;height:30px;line-height:30px;color:#0e76a8;left:486px;top:337px;"},{"id":"63","flow_id":"4","process_name":"\u5feb\u6377\u5ba1\u6279","process_to":"65","icon":"icon-star","style":"width:120px;height:30px;line-height:30px;color:#0e76a8;left:193px;top:472px;"},{"id":"64","flow_id":"4","process_name":"\u5ba1\u62791","process_to":"62,65","icon":"icon-star","style":"width:120px;height:30px;line-height:30px;color:#ff66b5;left:486px;top:137px;"},{"id":"65","flow_id":"4","process_name":"\u5f52\u6863\u6574\u7406\u4eba","process_to":"","icon":"icon-star","style":"width:120px;height:30px;line-height:30px;color:#0e76a8;left:738px;top:472px;"}]};
+    var processData = {"total":5,"list":[{"id":"61","flow_id":"4","process_name":"\u53d1\u8d77\u7533\u8bf7","process_to":"63,64","icon":"icon-ok","style":"width:121px;color:#0e76a8;left:193px;top:132px;"},{"id":"62","flow_id":"4","process_name":"\u5ba1\u62792","process_to":"65","icon":"icon-star","style":"width:120px;color:#0e76a8;left:486px;top:337px;"},{"id":"63","flow_id":"4","process_name":"\u5feb\u6377\u5ba1\u6279","process_to":"65","icon":"icon-star","style":"width:120px;color:#0e76a8;left:193px;top:472px;"},{"id":"64","flow_id":"4","process_name":"\u5ba1\u62791","process_to":"62,65","icon":"icon-star","style":"width:120px;color:#ff66b5;left:486px;top:137px;"},{"id":"65","flow_id":"4","process_name":"\u5f52\u6863\u6574\u7406\u4eba","process_to":"","icon":"icon-star","style":"width:120px;color:#0e76a8;left:738px;top:472px;"}]};
 
     /*创建流程设计器*/
     var _canvas = $("#flowdesign_canvas").Flowdesign({
                       "processData":processData
-                      /*,mtAfterDrop:function(params)
+                      /*,fnAfterDrop:function(params)
                       {
                           //alert("连接："+params.sourceId +" -> "+ params.targetId);
                       }*/
